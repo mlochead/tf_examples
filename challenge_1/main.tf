@@ -98,6 +98,7 @@ resource "aws_instance" "instance1" {
   instance_type          = var.instance_type
   subnet_id              = aws_subnet.subnet1.id
   security_groups        = [aws_security_group.allow_ssh_1.id]
+  key_name               = "keys1"
  }
 
  resource "aws_instance" "instance2" {
@@ -105,4 +106,5 @@ resource "aws_instance" "instance1" {
    instance_type          = var.instance_type
    subnet_id              = aws_subnet.subnet2.id
    security_groups        = [aws_security_group.allow_ssh_2.id]
+   key_name               = "keys1"
   }
