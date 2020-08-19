@@ -93,11 +93,21 @@ resource "aws_security_group" "allow_ssh_2" {
   }
 }
 
+data "aws_security_group" "default" {
+  name = "default"
+  vpc_id = aws_vpc.vpc1.id
+}
+
+data "aws_security_group" "default" {
+  name = "default"
+  vpc_id = aws_vpc.vpc2.id
+}
+
 resource "aws_instance" "instance1" {
   ami                    = data.aws_ami.the_ami.id
   instance_type          = var.instance_type
   subnet_id              = aws_subnet.subnet1.id
-  security_groups        = [aws_security_group.allow_ssh_1.id]
+  vpc_security_group_ids = [ data.aws_security_group.default_sg.id, aws_security_group.allow_ssh_1.id ]
   key_name               = "keys1"
  }
 
@@ -105,6 +115,6 @@ resource "aws_instance" "instance1" {
    ami                    = data.aws_ami.the_ami.id
    instance_type          = var.instance_type
    subnet_id              = aws_subnet.subnet2.id
-   security_groups        = [aws_security_group.allow_ssh_2.id]
+   vpc_security_group_ids = [ data.aws_security_group.default_sg.id, aws_security_group.allow_ssh_2.id ]
    key_name               = "keys1"
   }
