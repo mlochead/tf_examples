@@ -1,12 +1,12 @@
 provider "aws" {
-  region     = var.region
+  region = var.region
 }
 
 data "aws_ami" "the_ami" {
   most_recent = true
   filter {
     name   = "name"
-    values = [ "ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-*" ]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-*"]
   }
   filter {
     name   = "virtualization-type"
@@ -16,7 +16,7 @@ data "aws_ami" "the_ami" {
     name   = "architecture"
     values = ["x86_64"]
   }
-  owners = [ "099720109477" ]
+  owners = ["099720109477"]
 }
 
 resource "aws_vpc" "vpc1" {
@@ -29,8 +29,8 @@ resource "aws_vpc" "vpc1" {
 }
 
 resource "aws_subnet" "subnet1" {
-  vpc_id     = aws_vpc.vpc1.id
-  cidr_block = "10.0.1.0/24"
+  vpc_id                  = aws_vpc.vpc1.id
+  cidr_block              = "10.0.1.0/24"
   map_public_ip_on_launch = true
 
   tags = {
@@ -66,8 +66,8 @@ resource "aws_vpc" "vpc2" {
 }
 
 resource "aws_subnet" "subnet2" {
-  vpc_id     = aws_vpc.vpc2.id
-  cidr_block = "10.0.0.0/24"
+  vpc_id                  = aws_vpc.vpc2.id
+  cidr_block              = "10.0.0.0/24"
   map_public_ip_on_launch = true
 
   tags = {
@@ -94,27 +94,27 @@ resource "aws_security_group" "allow_ssh_2" {
 }
 
 data "aws_security_group" "default" {
-  name = "default"
-  vpc_id = aws_vpc.vpc1.id
+  name   = "default"
+  vpc_id = aws_vpc.vpc1.id
 }
 
 data "aws_security_group" "default2" {
-  name = "default"
-  vpc_id = aws_vpc.vpc2.id
+  name   = "default"
+  vpc_id = aws_vpc.vpc2.id
 }
 
 resource "aws_instance" "instance1" {
   ami                    = data.aws_ami.the_ami.id
   instance_type          = var.instance_type
   subnet_id              = aws_subnet.subnet1.id
-  vpc_security_group_ids = [ data.aws_security_group.default_sg.id, aws_security_group.allow_ssh_1.id ]
+  vpc_security_group_ids = [data.aws_security_group.default.id, aws_security_group.allow_ssh_1.id]
   key_name               = "keys1"
- }
+}
 
- resource "aws_instance" "instance2" {
-   ami                    = data.aws_ami.the_ami.id
-   instance_type          = var.instance_type
-   subnet_id              = aws_subnet.subnet2.id
-   vpc_security_group_ids = [ data.aws_security_group.default2_sg.id, aws_security_group.allow_ssh_2.id ]
-   key_name               = "keys1"
-  }
+resource "aws_instance" "instance2" {
+  ami                    = data.aws_ami.the_ami.id
+  instance_type          = var.instance_type
+  subnet_id              = aws_subnet.subnet2.id
+  vpc_security_group_ids = [data.aws_security_group.default2.id, aws_security_group.allow_ssh_2.id]
+  key_name               = "keys1"
+}
